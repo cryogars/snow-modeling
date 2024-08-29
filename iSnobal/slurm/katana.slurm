@@ -21,15 +21,16 @@ export OMP_NUM_THREADS=${SLURM_NTASKS}
 START_YEAR=2022
 START_MONTH=10
 
-## Update these variables with the actual paths ##
+## Paths ##
 INPUT_DIR=${HOME}/shared-data/iSnobal/HRRR
 
 BASIN_SETUP=${HOME}/project-data/iSnobal/MCS
 
-KATANA_DIR=${BASIN_SETUP}/katana
+KATANA_SCRIPT=${HOME}/projects/snow-modeling/iSnobal/scripts/katana_singularity.sh
+KATANA_INI=${HOME}/projects/snow-modeling/iSnobal/configs/katana.ini
 KATANA_OUTPUT_DIR=${HOME}/shared-data/iSnobal/MCS/katana/
+
 ## -------------------------------------------- ##
-KATANA_INI=${KATANA_DIR}/katana.ini
 
 for MONTH in {0..9}; do
   START=($(date -d "${START_MONTH}/01/${START_YEAR} + ${MONTH} month" "+%m %Y"))
@@ -49,7 +50,7 @@ for MONTH in {0..9}; do
   # Backup the used configuration of the processed month
   cp ${KATANA_INI} ${KATANA_OUTPUT_DIR}katana_${YEAR}${MONTH}.ini
 
-  ${KATANA_DIR}/katana_singularity.sh ${BASIN_SETUP} \
+  ${KATANA_SCRIPT} ${BASIN_SETUP} \
     ${INPUT_DIR} \
     ${KATANA_OUTPUT_DIR} 1>&2 \
     ${KATANA_INI}
