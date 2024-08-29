@@ -27,7 +27,7 @@ for NEXT in {0..7}; do
 
   >&1 echo "Processing: ${CURRENT_YEAR}${CURRENT_MONTH}"
 
-  ${HOME}/project-data/iSnobal/HRRR/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
+  ${HOME}/projects/snow-modeling/iSnobal/scripts/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
 
   if [ $? -ne 0 ]; then
     >&2 echo "ERROR processing ${CURRENT_YEAR}${CURRENT_MONTH}"
