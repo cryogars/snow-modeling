@@ -5,6 +5,6 @@
 
 # Initial run, no previous days
 micromamba run -n isnoda \
-awsm_daily_airflow -c ${HOME}/project-data/iSnobal/MCS/MCS_$(date -d "${1} + 1 year" +%Y).ini \
+awsm_daily_airflow -c ${HOME}/projects/snow-modeling/iSnobal/configs/MCS_$(date -d "${1} + 1 year" +%Y).ini \
   --no_previous \
   --start_date $1

@@ -14,5 +14,6 @@
 #SBATCH --output=slurm-%j.out-%N
 #SBATCH --error=slurm-%j.err-%N
 
-${HOME}/bin/micromamba run -n isnoda awsm_daily ${HOME}/project-data/iSnobal/MCS/MCS_2021.ini
+${HOME}/bin/micromamba run -n isnoda \
+  awsm_daily ${HOME}/projects/snow-modeling/iSnobal/configs/MCS_2024.ini
 
