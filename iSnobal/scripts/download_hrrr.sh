@@ -21,7 +21,8 @@ HRRR_VARS='TMP:2 m|RH:2 m|DPT: 2 m|UGRD:10 m|VGRD:10 m|TCDC:|APCP:surface|DSWRF:
 HRRR_FC_HOURS=( 1 6 )
 
 # State of Idaho in HRRR projection
-GRIB_DOMAIN="-117.5:-111.5 41.5:49.5"
+GRIB_DOMAIN_WE="-117.5:-111.5"
+GRIB_DOMAIN_SN="41.5:49.5"
 
 UofU_ARCHIVE='UofU'
 AWS_ARCHIVE='AWS'
@@ -172,7 +173,7 @@ for DATE in "${DATES[@]}"; do
         printf '\n'
         wget -q --no-check-certificate ${ARCHIVE_URL} -O $TMP_FILE | \
         wgrib2 $TMP_FILE -v0 -ncpu ${OMP_NUM_THREADS} -set_grib_type same \
-               -small_grib ${GRIB_DOMAIN} - | \
+               -small_grib ${GRIB_DOMAIN_WE} ${GRIB_DOMAIN_SN} - | \
         wgrib2 - -v0 -ncpu ${OMP_NUM_THREADS} -match "$HRRR_VARS" \
                -grib $FILE_NAME >&1
 
