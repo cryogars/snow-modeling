@@ -26,7 +26,7 @@ START_MONTH=10
 # Path to input, output, and config files
 BASIN_SETUP=/projects/dmcgrath@colostate.edu/iSnobal-configs/CameronPass
 INPUT_DIR=/pl/active/McGrath_Snow/HRRR
-KATANA_OUTPUT_DIR=/pl/active/McGrath_Snow/iSnobal/CP_katana
+KATANA_OUTPUT_DIR=/pl/active/McGrath_Snow/isnobal/CP_katana
 
 KATANA_INI=${BASIN_SETUP}/CP_katana.ini
 KATANA_IMAGE=/projects/dmcgrath@colostate.edu/iSnobal/katana/katana.sif
@@ -51,6 +51,9 @@ for MONTH in {0..11}; do
   # Update the config to the month processed
   sed -i -e "s/^start_date: .* UTC/start_date: ${YEAR}-${MONTH}-01 00:00:00 UTC/g" ${MONTH_INI}
   sed -i -e "s/^end_date: .* UTC/end_date: ${YEAR_END}-${MONTH_END}-01 00:00:00 UTC/g" ${MONTH_INI}
+  # Update config file (line 17) and log path (line 22)
+  sed -i -e "17s/katana_wn\.ini/katana_wn_${YEAR}${MONTH}\.ini/" ${MONTH_INI}
+  sed -i -e "22s/katana\.log/katana_${YEAR}${MONTH}\.log/" ${MONTH_INI}
 
   # Map container file path to local
   export SINGULARITY_BIND="${BASIN_SETUP}:/data/topo,${INPUT_DIR}:/data/input,${KATANA_OUTPUT_DIR}:/data/output"
