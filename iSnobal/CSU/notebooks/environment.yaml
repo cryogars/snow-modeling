@@ -1,0 +1,29 @@
+name: snow_viz
+channels:
+  - conda-forge
+dependencies:
+  - ca-certificates
+  - certifi
+  - cfgrib
+  - dask
+  - dask-jobqueue
+  - geopandas<1
+  - hvplot
+  - ipykernel
+  - libgdal-hdf5
+  - lxml=4.9.3
+  - matplotlib
+  - nc-time-axis
+  - netcdf4
+  - numpy
+  - openssl
+  - palettable
+  - pandas
+  - python=3.12
+  - rasterio
+  - scipy
+  - xarray
+  - pip:
+    - metloom==0.6.1
+
+prefix: "/projects/dmcgrath@colostate.edu/conda-envs/snow_viz"
