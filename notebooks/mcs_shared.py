@@ -3,6 +3,10 @@ import xarray as xr
 import numpy as np
 
 from nb_paths import SNOBAL_DIR, DATA_DIR, GROUP_STORE
+from metloom.pointdata import SnotelPointData
+
+from snobedo.snotel import SnotelLocations
+
 
 # Data Loading
 # ============
@@ -65,6 +69,26 @@ def load_day(date):
     diff = diff.rename('difference')
 
     return mcs_als, isnobal, diff, flight_mask
+
+
+def load_snotel_locations():
+    # Load coordinates
+    snotel_sites = SnotelLocations()
+    snotel_sites.load_from_json(DATA_DIR / 'snotel_sites_exact.json')
+    return snotel_sites
+
+
+def mcs_snotel_depth(start_date, end_date):
+    mcs_snotel_point = SnotelPointData("637:ID:SNTL", "MCS")
+    mcs_snotel = mcs_snotel_point.get_daily_data(
+        start_date, end_date,
+        [mcs_snotel_point.ALLOWED_VARIABLES.SNOWDEPTH]
+    )
+    # Convert to cm
+    mcs_snotel['SNOWDEPTH_M'] = mcs_snotel.SNOWDEPTH * 0.0254
+    # Convert to MST
+    return mcs_snotel['SNOWDEPTH_M'].reset_index().set_index("datetime").tz_convert('US/Mountain')['SNOWDEPTH_M']
+
 
 # Stats
 # =====
