@@ -74,4 +74,8 @@ def use_hvplot():
     import hvplot.xarray
     import hvplot.pandas
     hv.extension('bokeh')
+
+    # For image exports
+    hv.output(fig='auto', dpi=300)
+
     pd.options.plotting.backend = 'holoviews'
