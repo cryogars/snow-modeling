@@ -1,0 +1,10 @@
+name: tools
+channels:
+- conda-forge
+dependencies:
+- cdo
+- curl
+- parallel
+- wget
+- wgrib2
+
