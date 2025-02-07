@@ -7,6 +7,10 @@ from metloom.pointdata import SnotelPointData
 
 from snobedo.snotel import SnotelLocations
 
+
+# Constants
+# =========
+
 # All available days with ALS flights
 # Note that 20240213 had weather issues, precluding a complete coverage
 ALL_FLIGHT_DATES = [
@@ -19,6 +23,8 @@ ACCUMULATION_FLIGHTS = [
     "20221208", "20230209", "20230316", "20230405",
     "20240115"
 ]
+
+FIRST_WATER_YEAR = 2020
 
 # Data Loading
 # ============
