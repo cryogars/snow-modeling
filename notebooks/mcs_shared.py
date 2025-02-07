@@ -69,11 +69,6 @@ def load_day(date):
 # Stats
 # =====
 
-def admd(flight, diff):
-    median = float(flight.snowdepth.median().values)
-    isnobal_median_diff = (diff / median).rename('percent_diff_median')
-    return median, isnobal_median_diff
-
 def sdv(depth):
     mean = depth.mean().values
     std = depth.std().values
