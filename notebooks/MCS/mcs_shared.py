@@ -12,7 +12,10 @@ from snobedo.snotel import SnotelLocations
 # =========
 
 # All available days with ALS flights
-# Note that 20240213 had weather issues, precluding a complete coverage
+# Notes on flights:
+# * 20240213 had weather issues, precluding a complete coverage
+# * 20210310 has the smallest area of all March month
+# * 20231113 too early low snow, no pattern established
 ALL_FLIGHT_DATES = [
     "20210310",
     "20220217", "20220317", "20220407",
