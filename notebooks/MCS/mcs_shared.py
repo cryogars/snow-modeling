@@ -41,8 +41,9 @@ def load_topo(mask):
 
 
 def load_flight(date, masked=True):
+    resolution=30
     mcs_als = rxr.open_rasterio(
-        f"{GROUP_STORE}/MCS-ALS-snowdepth/{date}_MCS-snowdepth_10m.tif",
+        f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
         masked=True,
         band_as_variables=True,
     )
