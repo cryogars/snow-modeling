@@ -13,8 +13,6 @@ from snobedo.snotel import SnotelLocations
 
 from raster_file import RasterFile
 
-from nb_paths import *
-
 # Plot styles
 BOKEH_FONT = dict(
     fontsize={
@@ -75,4 +73,9 @@ def add_legend_box(ax, entries):
 def use_hvplot():
     import hvplot.xarray
     import hvplot.pandas
+    hv.extension('bokeh')
+
+    # For image exports
+    hv.output(fig='auto', dpi=300)
+
     pd.options.plotting.backend = 'holoviews'
