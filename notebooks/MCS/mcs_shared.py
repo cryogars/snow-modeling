@@ -24,7 +24,7 @@ ALL_FLIGHT_DATES = [
 ]
 ACCUMULATION_FLIGHTS = [
     "20221208", "20230209", "20230316", "20230405",
-    "20240115"
+    "20231228", "20240115"
 ]
 
 FIRST_WATER_YEAR = 2020
@@ -40,8 +40,7 @@ def load_topo(mask):
     return topo_als
 
 
-def load_flight(date, masked=True):
-    resolution=30
+def load_flight(date, resolution, masked=True):
     mcs_als = rxr.open_rasterio(
         f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
         masked=True,
@@ -49,9 +48,10 @@ def load_flight(date, masked=True):
     )
     mcs_als.name = 'snowdepth'
     # Remove depth values less than 0
-    mcs_als.values[mcs_als < 0] = 0
+    mcs_als.values[mcs_als < 0] = np.nan
     # Clip depth values above 5
     mcs_als.values[mcs_als > 5] = np.nan
+    # Remove band variable
     mcs_als = mcs_als.drop_vars('band').to_dataset()
     mcs_als = mcs_als.squeeze("band")
 
@@ -81,9 +81,9 @@ def load_model(date, mask=None):
     return isnobal
 
 
-def load_day(date):
+def load_day(date, resolution):
     # Flight
-    mcs_als, flight_mask = load_flight(date)
+    mcs_als, flight_mask = load_flight(date, resolution)
     isnobal = load_model(date, flight_mask)
 
     # Difference
