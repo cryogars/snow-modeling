@@ -8,6 +8,9 @@ import matplotlib.font_manager as font_manager
 import holoviews as hv
 from holoviews import dim, opts
 
+# Showing dataframes in notebooks
+from IPython.display import display
+
 from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
 from snobedo.snotel import SnotelLocations
 
@@ -16,13 +19,13 @@ from raster_file import RasterFile
 # Plot styles
 BOKEH_FONT = dict(
     fontsize={
-        'title': 24,
-        'labels': 24,
-        'xlabel': 24,
-        'ylabel': 24,
-        'xticks': 20,
-        'yticks': 20,
-        'legend': 24,
+        'title': 18,
+        'labels': 18,
+        'xlabel': 16,
+        'ylabel': 16,
+        'xticks': 14,
+        'yticks': 14,
+        'legend': 16,
     }
 )
 HV_PLOT_OPTS = dict(
