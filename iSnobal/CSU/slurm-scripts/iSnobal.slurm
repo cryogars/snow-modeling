@@ -18,8 +18,8 @@
 # Enable CPU Hyper-threading
 export OMP_NUM_THREADS=${SLURM_NTASKS}
 
-module load mambaforge
+module load miniforge
 mamba activate isnoda
 
-awsm_daily /projects/dmcgrath@colostate.edu/iSnobal-configs/CameronPass/CP_awsm_2021.ini
+awsm -c /projects/dmcgrath@colostate.edu/iSnobal-configs/CameronPass/CP_awsm_2021.ini
 

@@ -15,7 +15,7 @@
 #SBATCH --output=slurm-%j.out-%N
 #SBATCH --error=slurm-%j.err-%N
 
-module load mambaforge
+module load miniforge
 mamba activate snobedo
 
 # Set after module loading to prevent overriding by module call
