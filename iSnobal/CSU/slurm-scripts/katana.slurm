@@ -3,6 +3,7 @@
 #SBATCH --job-name=katana
 #SBATCH --account=csu-general
 #SBATCH --partition=csu
+#SBATCH --qos=csu
 
 #SBATCH --time=4:00:00
 #SBATCH --ntasks=24
