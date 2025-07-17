@@ -17,8 +17,8 @@
 set -e
 source ~/.bashrc
 
-# WindNinja is installed via Spack package manager
-spack env activate windninja
+# WindNinja is installed via Spack as a tcl module
+module activate windninja/3.11.2-gcc-12.1.0-up4e7sr
 
 START_YEAR=2024
 START_MONTH=10
