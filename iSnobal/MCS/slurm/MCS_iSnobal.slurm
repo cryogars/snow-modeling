@@ -14,6 +14,11 @@
 #SBATCH --output=slurm-%j.out-%N
 #SBATCH --error=slurm-%j.err-%N
 
-${HOME}/bin/micromamba run -n isnoda \
-  awsm -c ${HOME}/projects/snow-modeling/iSnobal/configs/MCS_2024.ini
+CONDA_ENV="/bsushare/hpmarshall-shared/conda-envs/isnoda"
+
+${HOME}/bin/micromamba run -p "${CONDA_ENV}" \
+  awsm -c ${HOME}/projects/snow-modeling/iSnobal/MCS/configs/MCS_2021.ini \
+    --no_previous --start_date 2020-10-01
+${HOME}/bin/micromamba run -p "${CONDA_ENV}" \
+  awsm -c ${HOME}/projects/snow-modeling/iSnobal/MCS/configs/MCS_2021.ini
 
