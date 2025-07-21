@@ -2,6 +2,8 @@ import rioxarray as rxr
 import xarray as xr
 import numpy as np
 
+from pyproj import Proj, Transformer
+
 from nb_paths import SNOBAL_DIR, DATA_DIR, GROUP_STORE
 from metloom.pointdata import SnotelPointData
 
@@ -117,6 +119,9 @@ def load_snotel_locations():
 
 
 def mcs_snotel_depth(start_date, end_date):
+    """
+    Load SNOTEL data via metloom
+    """
     mcs_snotel_point = SnotelPointData("637:ID:SNTL", "MCS")
     mcs_snotel = mcs_snotel_point.get_daily_data(
         start_date, end_date,
@@ -125,7 +130,15 @@ def mcs_snotel_depth(start_date, end_date):
     # Convert to cm
     mcs_snotel['SNOWDEPTH_M'] = mcs_snotel.SNOWDEPTH * 0.0254
     # Convert to MST
-    return mcs_snotel['SNOWDEPTH_M'].reset_index().set_index("datetime").tz_convert('US/Mountain')['SNOWDEPTH_M']
+    return mcs_snotel['SNOWDEPTH_M'].reset_index().set_index("datetime").tz_convert('US/Mountain')['SNOWDEPTH_M'], mcs_snotel_point
+
+
+def x_y_snotel(snotel_station):
+    """
+    Convert Snotel from lon/lat to x/y
+    """
+    converter = Transformer.from_proj(Proj('EPSG:4326'), Proj('EPSG:32611'), always_xy=True)
+    return converter.transform(snotel_station.metadata.x, snotel_station.metadata.y)
 
 
 # Stats
