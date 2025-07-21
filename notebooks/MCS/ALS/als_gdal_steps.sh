@@ -13,12 +13,9 @@ gdal_edit.py -a_nodata nan ${INPUT}
 # Name for translated file
 NEW_FILE=$(realpath ${1/depth/depth_${RESOLUTION}m})
 
-# Remove old if exists
-[[ -f ${NEW_FILE} ]] && rm ${NEW_FILE}
-
-# Translate to model domain and resolution
-gdal_translate --optfile ${HOME}/.gdalopts \
-  -r average -tr ${RESOLUTION} ${RESOLUTION} \
-  -projwin 594356.438 4877419.000 616456.438 4855619.000 \
+# Warp to model domain and resolution
+gdalwarp -overwrite --optfile ~/.gdalopts \
+  -r cubic -tr ${RESOLUTION} ${RESOLUTION} \
+  -te 601558.000 4862467.500 609431.500 4870872.500 \
   ${INPUT} ${NEW_FILE}
   
