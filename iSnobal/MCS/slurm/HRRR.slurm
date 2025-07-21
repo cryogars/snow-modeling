@@ -17,17 +17,17 @@
 export OMP_NUM_THREADS=${SLURM_NTASKS}
 module load wgrib2/3.1.3/gcc/12.1.0
 
-YEAR=2023
+YEAR=2024
 MONTH=10
 
-for NEXT in {0..7}; do
+for NEXT in {0..9}; do
   CURRENT_MONTH=($(date -d "${YEAR}/${MONTH}/01 + ${NEXT} month" "+%m %Y"))
   CURRENT_YEAR=${CURRENT_MONTH[1]}
   CURRENT_MONTH=${CURRENT_MONTH[0]}
 
   >&1 echo "Processing: ${CURRENT_YEAR}${CURRENT_MONTH}"
 
-  ${HOME}/projects/snow-modeling/iSnobal/scripts/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
+  ${HOME}/projects/iSnobal/isnoda/scripts/HRRR/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
 
   if [ $? -ne 0 ]; then
     >&2 echo "ERROR processing ${CURRENT_YEAR}${CURRENT_MONTH}"
