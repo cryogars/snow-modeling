@@ -60,7 +60,7 @@ def load_flight_tif(date, resolution, masked=True):
     )
 
 
-def load_flight(date, masked=True):
+def load_flight(date, resolution, masked=True):
     mcs_als = load_flight_tif(date, resolution, masked)
     mcs_als.name = 'snowdepth'
 
