@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -8,13 +9,12 @@ import matplotlib.font_manager as font_manager
 import holoviews as hv
 from holoviews import dim, opts
 
+from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
+
 # Showing dataframes in notebooks
 from IPython.display import display
 
-from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
-from snobedo.snotel import SnotelLocations
-
-from raster_file import RasterFile
+np.set_printoptions(precision=3, suppress=True)
 
 # Plot styles
 BOKEH_FONT = dict(
