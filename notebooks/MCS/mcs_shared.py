@@ -41,18 +41,33 @@ def load_topo(mask):
     return topo_als
 
 
-def load_flight(date, resolution, masked=True):
-    mcs_als = rxr.open_rasterio(
+def load_dem(resolution):
+    dem = rxr.open_rasterio(
+        f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/MCS_REFDEM_32611_{resolution}m.tif",
+        masked=True,
+        band_as_variables=True,
+    )
+    return dem.where(~np.isnan(dem), drop=True)
+
+
+def load_flight_tif(date, resolution, masked=True):
+    return rxr.open_rasterio(
         f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
         masked=True,
         band_as_variables=True,
     )
+
+
+def load_flight(date, masked=True):
+    mcs_als = load_flight_tif(date, resolution, masked)
     mcs_als.name = 'snowdepth'
+
     # Remove depth values less than 0
     mcs_als.values[mcs_als < 0] = np.nan
     # Clip depth values above 5
     mcs_als.values[mcs_als > 5] = np.nan
-    # Remove band variable
+
+    # Cleanup using rio-xarray, remove band variable
     mcs_als = mcs_als.drop_vars('band').to_dataset()
     mcs_als = mcs_als.squeeze("band")
 
