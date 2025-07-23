@@ -22,6 +22,8 @@ mamba activate snobedo
 export OMP_NUM_THREADS=${SLURM_NTASKS}
 export XDG_CACHE_HOME=/tmp
 
+umask 0002
+
 # Path to iSnobal output up to the daily outputs (e.g. runYYYYMMDD)
 SOURCE_FOLDER="/pl/active/McGrath_Snow/isnobal/wy2022/cp/run*"
 

@@ -22,6 +22,8 @@ export OMP_NUM_THREADS=${SLURM_NTASKS}
 module load miniforge
 mamba activate isnoda
 
+umask 0002
+
 START_DATE="2023-10-01"
 WATER_YEAR=$((${START_DATE:0:4} + 1))
 

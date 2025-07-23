@@ -20,6 +20,8 @@ module load singularity/3.7.4
 
 export OMP_NUM_THREADS=${SLURM_NTASKS}
 
+umask 0002
+
 START_YEAR=2020
 START_MONTH=10
 
