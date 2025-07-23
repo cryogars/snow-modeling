@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -9,22 +10,22 @@ import holoviews as hv
 from holoviews import dim, opts
 
 from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
-from snobedo.snotel import SnotelLocations
 
-from raster_file import RasterFile
+# Showing dataframes in notebooks
+from IPython.display import display
 
-from nb_paths import *
+np.set_printoptions(precision=3, suppress=True)
 
 # Plot styles
 BOKEH_FONT = dict(
     fontsize={
-        'title': 24,
-        'labels': 24,
-        'xlabel': 24,
-        'ylabel': 24,
-        'xticks': 20,
-        'yticks': 20,
-        'legend': 24,
+        'title': 18,
+        'labels': 18,
+        'xlabel': 16,
+        'ylabel': 16,
+        'xticks': 14,
+        'yticks': 14,
+        'legend': 16,
     }
 )
 HV_PLOT_OPTS = dict(
@@ -75,4 +76,9 @@ def add_legend_box(ax, entries):
 def use_hvplot():
     import hvplot.xarray
     import hvplot.pandas
+    hv.extension('bokeh')
+
+    # For image exports
+    hv.output(fig='auto', dpi=300)
+
     pd.options.plotting.backend = 'holoviews'
