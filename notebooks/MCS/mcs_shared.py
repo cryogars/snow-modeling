@@ -1,4 +1,4 @@
-import rioxarray as rxr
+import rasterio
 import xarray as xr
 import numpy as np
 
@@ -32,6 +32,8 @@ ACCUMULATION_FLIGHTS = [
     "20250113", "20250129"
 ]
 
+MC_ALS = f"{GROUP_STORE}/MCS-ALS-snowdepth" 
+
 # Data Loading
 # ============
 
@@ -44,72 +46,33 @@ def load_topo(mask):
 
 
 def load_dem(resolution):
-    dem = rxr.open_rasterio(
-        f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/MCS_REFDEM_32611_{resolution}m.tif",
-        masked=True,
-        band_as_variables=True,
-    )
-    return dem.where(~np.isnan(dem), drop=True)
+    with rasterio.open(
+        f"{MC_ALS}/{resolution}m/MCS_REFDEM_32611_{resolution}m.tif",
+    ) as dem_file:
+        dem = dem_file.read(1)
+        return dem.where(~np.isnan(dem), drop=True)
 
 
-def load_flight_tif(date, resolution, masked=True):
-    return rxr.open_rasterio(
-        f"{GROUP_STORE}/MCS-ALS-snowdepth/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
-        masked=True,
-        band_as_variables=True,
-    )
+def load_als_depth(date, resolution):
+    with rasterio.open(
+        f"{MC_ALS}/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
+    ) as flight_tif:
+        return flight_tif.read(1)
 
 
-def load_flight(date, resolution, masked=True):
-    mcs_als = load_flight_tif(date, resolution, masked)
-    mcs_als.name = 'snowdepth'
-
-    # Remove depth values less than 0
-    mcs_als.values[mcs_als < 0] = np.nan
-    # Clip depth values above 5
-    mcs_als.values[mcs_als > 5] = np.nan
-
-    # Cleanup using rio-xarray, remove band variable
-    mcs_als = mcs_als.drop_vars('band').to_dataset()
-    mcs_als = mcs_als.squeeze("band")
-
-    # Reduce to flight bounding box
-    flight_mask = ~np.isnan(mcs_als.snowdepth)
-    if masked:
-        mcs_als = mcs_als.where(flight_mask, drop=True)
-
-    return mcs_als, flight_mask
+def load_isnobal_depth(date, resolution):
+    with rasterio.open(
+        f"{MC_ALS}/{resolution}m/{date}_iSnobal_thickness.vrt",
+    ) as factors_file:
+        return factors_file.read(1)
 
 
-def load_model(date, mask=None):
-    if date in ["20231113", "20231228"]:
-        year = 2024
-    elif date in ["20221208"]:
-        year = 2023
-    else:
-        year = date[0:4]
-
-    isnobal = xr.open_dataset(SNOBAL_DIR / f'wy{year}/mcs/run{date}/snow.nc')
-    isnobal = isnobal.drop_vars('time').squeeze("time")
-    
-    if mask is not None:
-        isnobal.coords['mask'] = (('y', 'x'), mask.values)
-        isnobal = isnobal.where(isnobal.mask, drop=True)
-
-    return isnobal
-
-
-def load_day(date, resolution):
-    # Flight
-    mcs_als, flight_mask = load_flight(date, resolution)
-    isnobal = load_model(date, flight_mask)
-
-    # Difference
-    diff = isnobal.thickness.values - mcs_als.snowdepth
-    diff = diff.rename('difference')
-
-    return mcs_als, isnobal, diff, flight_mask
-
+def load_factors_tif(date, resolution):
+    with rasterio.open(
+        f"{MC_ALS}/{resolution}m/{date}_precip_factors.tif",
+    ) as factors_file:
+        return factors_file.read(1)
+        
 
 def load_snotel_locations():
     # Load coordinates
