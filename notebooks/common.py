@@ -15,6 +15,8 @@ from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
 from IPython.display import display
 
 np.set_printoptions(precision=3, suppress=True)
+pd.set_option('display.precision', 2)
+pd.set_option('display.float_format', '{:.2f}'.format)
 
 # Plot styles
 BOKEH_FONT = dict(
