@@ -7,7 +7,7 @@
 # $2 - path to ALS depth
 #
 # Loop example:
-# for FIL in 202*; do 
+# for FIL in 202*MCS*.tif; do 
 #   ~/projects/snow-modeling/notebooks/MCS/ALS/precip_factors.sh ~/shared-data/iSnobal/MCS/isnobal $FIL; 
 # done
 
@@ -27,22 +27,35 @@ if [[ $MONTH -gt 9 ]]; then
 fi
 
 ISNOBAL_NC="${1}/wy${YEAR}/mcs/run${DATE}/snow.nc"
-ISNOBAL_VRT="${1}/wy${YEAR}/mcs/run${DATE}/snow.vrt"
+ISNOBAL_VRT="$(pwd)/${DATE}_iSnobal_thickness.vrt"
 FACTORS_TIF="$(pwd)/${DATE}_precip_factors.tif"
+FLIGHT_MASK="$(pwd)/${DATE}_flight_mask.tif"
 
 # Get iSnobal simualted depth
+# State at midnight is on band 1
 gdalwarp -overwrite \
-  -r cubic -tr ${RESOLUTION} ${RESOLUTION} \
+  -r cubic \
+  -tr ${RESOLUTION} ${RESOLUTION} \
+  -srcband 1 \
   -te 601558.000 4862467.500 609431.500 4870872.500 \
   NETCDF:"${ISNOBAL_NC}":thickness ${ISNOBAL_VRT}
 
-# Calculate
+# Filter MCS extreme values
 gdal_calc.py --co="TILED=YES" --co="COMPRESS=LZW" --co="NUM_THREADS=ALL_CPUS"  \
   --overwrite \
-  --calc="A/B" \
+  --calc="A*(A>=0.1)*(A<=5.)" \
+  --NoDataValue ${NO_DATA} \
+  -A ${2} \
+  --outfile ${FLIGHT_MASK}
+
+# Calculate
+# Filter ALS values above 5 and below 0
+#   A*(A>=10)*(A<=100) + nan*(A<10) + nan*(A>100)
+gdal_calc.py --co="TILED=YES" --co="COMPRESS=LZW" --co="NUM_THREADS=ALL_CPUS"  \
+  --overwrite \
+  --calc="(A * C)/(B * C)" \
   --NoDataValue ${NO_DATA} \
   -A ${ISNOBAL_VRT} \
   -B ${2} \
+  -C ${FLIGHT_MASK} \
   --outfile ${FACTORS_TIF}
-
-rm ${ISNOBAL_VRT}
