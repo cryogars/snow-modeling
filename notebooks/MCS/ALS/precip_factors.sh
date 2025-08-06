@@ -14,7 +14,7 @@
 set -e
 
 # Spatial resolution in meters
-RESOLUTION=10
+RESOLUTION=100
 NO_DATA=-9999
 
 ALS_FILE=$(realpath "${2}" | xargs basename)
@@ -40,7 +40,7 @@ gdalwarp -overwrite \
   -te 601558.000 4862467.500 609431.500 4870872.500 \
   NETCDF:"${ISNOBAL_NC}":thickness ${ISNOBAL_VRT}
 
-# Filter MCS extreme values
+# Filter ALS values above 5 and below 0
 gdal_calc.py --co="TILED=YES" --co="COMPRESS=LZW" --co="NUM_THREADS=ALL_CPUS"  \
   --overwrite \
   --calc="A*(A>=0.1)*(A<=5.)" \
@@ -49,11 +49,9 @@ gdal_calc.py --co="TILED=YES" --co="COMPRESS=LZW" --co="NUM_THREADS=ALL_CPUS"  \
   --outfile ${FLIGHT_MASK}
 
 # Calculate
-# Filter ALS values above 5 and below 0
-#   A*(A>=10)*(A<=100) + nan*(A<10) + nan*(A>100)
 gdal_calc.py --co="TILED=YES" --co="COMPRESS=LZW" --co="NUM_THREADS=ALL_CPUS"  \
   --overwrite \
-  --calc="(A * C)/(B * C)" \
+  --calc="(B * C)/(A * C)" \
   --NoDataValue ${NO_DATA} \
   -A ${ISNOBAL_VRT} \
   -B ${2} \
