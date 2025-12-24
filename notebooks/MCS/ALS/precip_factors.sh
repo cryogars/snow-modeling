@@ -14,7 +14,7 @@
 set -e
 
 # Spatial resolution in meters
-RESOLUTION=100
+RESOLUTION=10
 NO_DATA=-9999
 
 ALS_FILE=$(realpath "${2}" | xargs basename)
@@ -34,8 +34,6 @@ FLIGHT_MASK="$(pwd)/${DATE}_flight_mask.tif"
 # Get iSnobal simualted depth
 # State at midnight is on band 1
 gdalwarp -overwrite \
-  -r cubic \
-  -tr ${RESOLUTION} ${RESOLUTION} \
   -srcband 1 \
   -te 601558.000 4862467.500 609431.500 4870872.500 \
   NETCDF:"${ISNOBAL_NC}":thickness ${ISNOBAL_VRT}
