@@ -1,6 +1,10 @@
 import rasterio
 import xarray as xr
 import numpy as np
+import pandas as pd
+
+from osgeo import gdal
+gdal.UseExceptions()
 
 from pyproj import Proj, Transformer
 
@@ -103,6 +107,70 @@ def x_y_snotel(snotel_station):
     converter = Transformer.from_proj(Proj('EPSG:4326'), Proj('EPSG:32611'), always_xy=True)
     return converter.transform(snotel_station.metadata.x, snotel_station.metadata.y)
 
+
+def mcs_snotel_csv():
+    """
+    Load SNOTEL data via local file
+    """
+    depth = pd.read_csv(
+        MC_ALS + '/MCS-SNOTEL.csv',
+        parse_dates=['Date'], index_col=['Date'],
+        comment='#',
+    )
+    depth['MCS depth'] *= 0.0254
+    depth['MCS SWE'] *= 25.4
+    depth['MCS precip accumulated'] *= 25.4
+    depth['MCS precip diff'] *= 25.4
+
+    return depth
+
+def get_raster_pixel_value(file, geo_x, geo_y):
+    """
+    Return value from raster at given geo coordinates
+    """
+    with gdal.Open(file) as dataset:
+        gt = dataset.GetGeoTransform()
+
+        pixel_coords = gdal.ApplyGeoTransform(
+            gdal.InvGeoTransform(gt), geo_x, geo_y
+        )
+        pixel_x, pixel_y = int(pixel_coords[0]), int(pixel_coords[1])
+
+        band = dataset.GetRasterBand(1)
+
+        val_array = band.ReadAsArray(
+            xoff=pixel_x, yoff=pixel_y, win_xsize=1, win_ysize=1
+        )
+
+        return val_array[0][0]
+
+
+def get_station_pixel_factors(resolution, station):
+    values = []
+
+    geo_x, geo_y = x_y_snotel(station)
+    for date in ACCUMULATION_FLIGHTS:
+        file = f"{MC_ALS}/{resolution}m_base/{date}_precip_factors.tif"
+
+        value = get_raster_pixel_value(file, geo_x, geo_y)
+        date = pd.to_datetime(date)
+        values.append((date, value))
+
+    return values
+
+
+def get_station_pixel_depths(resolution, station):
+    values = []
+
+    geo_x, geo_y = x_y_snotel(station)
+    for date in ACCUMULATION_FLIGHTS:
+        file = f"{MC_ALS}/{resolution}m_base/{date}_MCS-snowdepth_{resolution}m.tif"
+
+        value = get_raster_pixel_value(file, geo_x, geo_y)
+        date = pd.to_datetime(date)
+        values.append((date, value))
+
+    return values
 
 # Stats
 # =====
