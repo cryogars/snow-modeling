@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.patches as mpatches
 import matplotlib.font_manager as font_manager
+from matplotlib.offsetbox import AnchoredText
 
 import holoviews as hv
 from holoviews import dim, opts
@@ -17,6 +18,9 @@ from IPython.display import display
 np.set_printoptions(precision=3, suppress=True)
 pd.set_option('display.precision', 2)
 pd.set_option('display.float_format', '{:.2f}'.format)
+
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+pd.options.mode.copy_on_write = True
 
 # Plot styles
 BOKEH_FONT = dict(
@@ -52,7 +56,10 @@ RESAMPLE_1_DAY_OPTS = dict(time='1D', base=23)
 # Plot settings and helpers
 plt.rcParams.update(
     {
-        'axes.labelsize': 10
+        'axes.titlesize': 8,
+        'axes.labelsize': 8,
+        'xtick.labelsize': 8,
+        'ytick.labelsize': 8
     }
 )
 
