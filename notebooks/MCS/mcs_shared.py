@@ -36,7 +36,8 @@ ACCUMULATION_FLIGHTS = [
     "20250113", "20250129"
 ]
 
-MC_ALS = f"{GROUP_STORE}/MCS-ALS-snowdepth" 
+MC_ALS = f"{GROUP_STORE}/MCS-ALS-snowdepth"
+PRECIP_DIR = f"{MC_ALS}/precip_data"
 
 # Data Loading
 # ============
@@ -101,12 +102,17 @@ def mcs_snotel_depth(start_date, end_date):
     mcs_snotel_point = SnotelPointData("637:ID:SNTL", "MCS")
     mcs_snotel = mcs_snotel_point.get_daily_data(
         start_date, end_date,
-        [mcs_snotel_point.ALLOWED_VARIABLES.SNOWDEPTH]
+        [
+            mcs_snotel_point.ALLOWED_VARIABLES.SNOWDEPTH,
+            mcs_snotel_point.ALLOWED_VARIABLES.PRECIPITATIONACCUM,
+        ]
     )
     # Convert to cm
-    mcs_snotel['SNOWDEPTH_M'] = mcs_snotel.SNOWDEPTH * 0.0254
+    mcs_snotel['SNOWDEPTH'] *= 0.0254
+    # Convert to mm
+    mcs_snotel['ACCUMULATED PRECIPITATION'] *= 25.4
     # Convert to MST
-    return mcs_snotel['SNOWDEPTH_M'].reset_index().set_index("datetime").tz_convert('US/Mountain')['SNOWDEPTH_M'], mcs_snotel_point
+    return mcs_snotel.reset_index().set_index("datetime").tz_convert('US/Mountain')[['SNOWDEPTH', 'ACCUMULATED PRECIPITATION']], mcs_snotel_point
 
 
 def x_y_snotel(snotel_station):
