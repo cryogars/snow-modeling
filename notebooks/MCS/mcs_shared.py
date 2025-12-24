@@ -40,6 +40,15 @@ MC_ALS = f"{GROUP_STORE}/MCS-ALS-snowdepth"
 
 # Data Loading
 # ============
+def model_run(resolution, base=False):
+    """
+    Return file path for resolution at base path if requested.
+    Otherwise the default path is returned.
+    """
+    if base:
+        return f"{MC_ALS}/{resolution}m_base/"
+    else:
+        return f"{MC_ALS}/{resolution}m/"
 
 def load_topo(mask):
     topo = xr.open_dataset(f'{DATA_DIR}/MCS/topo.nc')
@@ -49,34 +58,34 @@ def load_topo(mask):
     return topo_als
 
 
-def load_dem(resolution):
+def load_dem(resolution, base_run=False):
     with rasterio.open(
-        f"{MC_ALS}/{resolution}m/MCS_REFDEM_32611_{resolution}m.tif",
+        f"{model_run(resolution, base_run)}/MCS_REFDEM_32611_{resolution}m.tif",
     ) as dem_file:
         dem = dem_file.read(1)
         return dem.where(~np.isnan(dem), drop=True)
 
 
-def load_als_depth(date, resolution):
+def load_als_depth(date, resolution, base_run=False):
     with rasterio.open(
-        f"{MC_ALS}/{resolution}m/{date}_MCS-snowdepth_{resolution}m.tif",
+        f"{model_run(resolution, base_run)}/{date}_MCS-snowdepth_{resolution}m.tif",
     ) as flight_tif:
         return flight_tif.read(1)
 
 
-def load_isnobal_depth(date, resolution):
+def load_isnobal_depth(date, resolution, base_run=False):
     with rasterio.open(
-        f"{MC_ALS}/{resolution}m/{date}_iSnobal_thickness.vrt",
+        f"{model_run(resolution, base_run)}/{date}_iSnobal_thickness.vrt",
     ) as factors_file:
         return factors_file.read(1)
 
 
-def load_factors_tif(date, resolution):
+def load_factors_tif(date, resolution, base_run=False):
     with rasterio.open(
-        f"{MC_ALS}/{resolution}m/{date}_precip_factors.tif",
+        f"{model_run(resolution, base_run)}/{date}_precip_factors.tif",
     ) as factors_file:
         return factors_file.read(1)
-        
+
 
 def load_snotel_locations():
     # Load coordinates
