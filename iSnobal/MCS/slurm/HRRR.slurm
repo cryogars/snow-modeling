@@ -14,20 +14,21 @@
 #SBATCH --output=slurm-%j.out-%N
 #SBATCH --error=slurm-%j.err-%N
 
-export OMP_NUM_THREADS=${SLURM_NTASKS}
-module load wgrib2/3.1.3/gcc/12.1.0
+set -e
 
-YEAR=2024
+umask 002
+
+YEAR=2025
 MONTH=10
 
 for NEXT in {0..9}; do
-  CURRENT_MONTH=($(date -d "${YEAR}/${MONTH}/01 + ${NEXT} month" "+%m %Y"))
+  CURRENT_MONTH=($(date -d "${YEAR}/${MONTH}/01 + $((10#${NEXT})) month" "+%m %Y"))
   CURRENT_YEAR=${CURRENT_MONTH[1]}
   CURRENT_MONTH=${CURRENT_MONTH[0]}
 
   >&1 echo "Processing: ${CURRENT_YEAR}${CURRENT_MONTH}"
 
-  ${HOME}/projects/iSnobal/isnoda/scripts/HRRR/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
+  micromamba run -n hrrr ${HOME}/projects/iSnobal/model_setup/scripts/HRRR/download_hrrr.sh ${CURRENT_YEAR} ${CURRENT_MONTH}
 
   if [ $? -ne 0 ]; then
     >&2 echo "ERROR processing ${CURRENT_YEAR}${CURRENT_MONTH}"

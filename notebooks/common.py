@@ -1,30 +1,37 @@
 import pandas as pd
+import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.patches as mpatches
 import matplotlib.font_manager as font_manager
+from matplotlib.offsetbox import AnchoredText
 
 import holoviews as hv
 from holoviews import dim, opts
 
 from snobedo.lib.dask_utils import start_cluster, client_ip_and_port
-from snobedo.snotel import SnotelLocations
 
-from raster_file import RasterFile
+# Showing dataframes in notebooks
+from IPython.display import display
 
-from nb_paths import *
+np.set_printoptions(precision=3, suppress=True)
+pd.set_option('display.precision', 2)
+pd.set_option('display.float_format', '{:.2f}'.format)
+
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+pd.options.mode.copy_on_write = True
 
 # Plot styles
 BOKEH_FONT = dict(
     fontsize={
-        'title': 24,
-        'labels': 24,
-        'xlabel': 24,
-        'ylabel': 24,
-        'xticks': 20,
-        'yticks': 20,
-        'legend': 24,
+        'title': 18,
+        'labels': 18,
+        'xlabel': 16,
+        'ylabel': 16,
+        'xticks': 14,
+        'yticks': 14,
+        'legend': 16,
     }
 )
 HV_PLOT_OPTS = dict(
@@ -49,7 +56,10 @@ RESAMPLE_1_DAY_OPTS = dict(time='1D', base=23)
 # Plot settings and helpers
 plt.rcParams.update(
     {
-        'axes.labelsize': 10
+        'axes.titlesize': 8,
+        'axes.labelsize': 8,
+        'xtick.labelsize': 8,
+        'ytick.labelsize': 8
     }
 )
 
@@ -75,4 +85,9 @@ def add_legend_box(ax, entries):
 def use_hvplot():
     import hvplot.xarray
     import hvplot.pandas
+    hv.extension('bokeh')
+
+    # For image exports
+    hv.output(fig='auto', dpi=300)
+
     pd.options.plotting.backend = 'holoviews'
