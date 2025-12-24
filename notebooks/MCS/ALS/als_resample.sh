@@ -2,6 +2,8 @@
 # Steps to change MCS lidar flights to configured resolution
 #
 
+set -e
+
 # Spatial resolution in meters
 RESOLUTION=10
 
