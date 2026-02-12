@@ -21,7 +21,7 @@ from snobedo.snotel import SnotelLocations
 # Notes on flights:
 # * 20240213 had weather issues, precluding a complete coverage
 # * 20210310 has the smallest area of all March month
-# * 20231113 too early low snow, no pattern established
+# * 20231113 and 20231228 too early low snow, no pattern established
 ALL_FLIGHT_DATES = [
     "20210310",
     "20220217", "20220317", "20220407",
@@ -29,11 +29,17 @@ ALL_FLIGHT_DATES = [
     "20231113", "20231228", "20240115", "20240315",
     "20250113", "20250129", "20250404", "20250501"
 ]
+# Removed flight:
+# * 20240115 - The storm before this flight was overestimated in the precip data
+#              showing a model high bias throughout the area.
 ACCUMULATION_FLIGHTS = [
-    "20221208", "20230209", "20230316", # "20230405",
-    #"20231228",
-    "20240115",
-    "20250113", "20250129"
+    "20221208", "20230209", "20230316",
+    "20250129",
+]
+SETTLED_FLIGHTS = [
+    "20230405",
+    "20231228"
+    "20240315",
 ]
 
 MC_ALS = f"{GROUP_STORE}/MCS-ALS-snowdepth"
@@ -47,9 +53,9 @@ def model_run(resolution, base=False):
     Otherwise the default path is returned.
     """
     if base:
-        return f"{MC_ALS}/{resolution}m_base/"
+        return f"{MC_ALS}/{resolution}m_base"
     else:
-        return f"{MC_ALS}/{resolution}m/"
+        return f"{MC_ALS}/{resolution}m"
 
 def load_topo(mask):
     topo = xr.open_dataset(f'{DATA_DIR}/MCS/topo.nc')
